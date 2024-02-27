@@ -107,7 +107,7 @@ class TestAuctionBehave:
         
     def test_register_of_participants(self):
         entrace = Auction('Leilão', 20, 'LE12', '12/12/2024')
-        expected = [{'id': 1, 'name': 'Luan'}]
+        expected = {1: 'Luan'}
         
         entrace.register_participant(1, 'Luan')
        
@@ -180,7 +180,7 @@ class TestAuctionBehave:
         
     def test_min_max_bids_when_len_bids_equals_1(self):
         entrace = Auction('Leilão', 20, 'LE12', '12/12/2024')
-        expected = [{'max': {'name': 'Luan', 'bid': 21}, 'min': {'name': 'Luan', 'bid': 21}}]
+        expected = {'max': {'name': 'Luan', 'bid': 21}, 'min': {'name': 'Luan', 'bid': 21}}
         
         entrace.start_auction()
         entrace.register_participant(1, 'Luan')
@@ -193,7 +193,7 @@ class TestAuctionBehave:
     
     def test_min_max_bids_when_len_bids_greater_than_1(self):
         entrace = Auction('Leilão', 20, 'LE12', '12/12/2024')
-        expected = [{'max': {'name': 'Pedro', 'bid': 50}, 'min': {'name': 'Luan', 'bid': 21}}]
+        expected = {'max': {'name': 'Pedro', 'bid': 50}, 'min': {'name': 'Luan', 'bid': 21}}
         
         entrace.start_auction()
         entrace.register_participant(1, 'Luan')

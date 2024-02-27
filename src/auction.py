@@ -8,7 +8,7 @@ class Auction:
         self._code = code
         self._status = 'INATIVO'
         self._expiration_date = expiration_date
-        self._participants = []
+        self._participants = {}
         self._bids = None
         self._check_date()
         
@@ -52,10 +52,7 @@ class Auction:
         
     def register_participant(self, _id, name):
         participant = Participant(_id, name)
-        self._participants.append({
-            'id': participant.id,
-            'name': participant.name
-        })
+        self._participants[_id] = participant.name
         
                 
     def make_bid(self, value, participant):
@@ -67,52 +64,40 @@ class Auction:
         
         
     def _check_bid(self, value, participant):
-        if {'id': participant.id, 'name': participant.name} in self._participants:
+        if participant.id in self._participants:
             if len(self._bids) == 0:
                 if value < self._min_value:
                     raise Exception('O valor do lance não pode ser menor que o lance mínimo')
-
-            else:   
-                if participant.id == self._bids[-1]['id']:
-                    raise Exception('Um mesmo participante não pode efetuar dois lances seguidos')  
-                elif value <= self._bids[-1]['value']:
+            else:
+                if value <= self._bids[-1]['value']:
                     raise Exception('O lance não pode ser menor ou igual ao último')
+                if self._bids[-1]['id'] == participant.id:
+                    raise Exception('Um mesmo participante não pode efetuar dois lances seguidos')
                 
     
     def _check_winner(self):
-        if len(self._bids) > 0:
-            greater = self._bids[-1]['value']
-            _id = [d['id'] for d in self._bids if greater == d['value']][-1]
-            winner = [d['name'] for d in self._participants if _id == d['id']][-1]
-            return winner
+        if not self._bids:
+            return None
+        return self._participants[self._bids[-1]['id']]
         
             
     def auction_bids(self):
-        auction_bids = []
-        if len(self._bids) > 0:
-            for bid in self._bids:
-                _id, value = tuple(bid.values())
-                name = [d['name'] for d in self._participants if _id == d['id']][-1]
-                auction_bids.append({'name': name, 'value': value})
-            return auction_bids
-        return 'Não foram feitos lances nesse leilão ainda'
+        if not self._bids:
+            return 'Não foram feitos lances nesse leilão ainda'
+        return [{'name': self._participants[bid['id']], 'value': bid['value']} for bid in self._bids]
     
     
     def _check_min_max_bid(self):
-        if len(self._bids) == 1:
-            bid = self._bids[-1]
-            name = [d['name'] for d in self._participants if bid['id'] == d['id']][-1]
-            return [{'max': {'name': name, 'bid': bid['value']}, 'min': {'name': name, 'bid': bid['value']}}]
-        
-        elif len(self._bids) > 1:
-            max_bid = self._bids[-1]
-            min_bid = self._bids[0]
-            name_max = [d['name'] for d in self._participants if max_bid['id'] == d['id']][-1]
-            name_min = [d['name'] for d in self._participants if min_bid['id'] == d['id']][-1]
-            return [{'max': {'name': name_max, 'bid': max_bid['value']}, 'min': {'name': name_min, 'bid': min_bid['value']}}]
-        
-        else:
+        if not self._bids:
             return 'Não foram feitos lances nesse leilão ainda'
+        
+        min_bid = self._bids[0]
+        max_bid = self._bids[-1]
+        
+        return {
+            'max': {'name': self._participants[max_bid['id']], 'bid': max_bid['value']},
+            'min': {'name': self._participants[min_bid['id']], 'bid': min_bid['value']},
+        }
     
     
     def get_min_max_bid(self):
