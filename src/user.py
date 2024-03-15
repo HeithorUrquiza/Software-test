@@ -1,14 +1,29 @@
-class Participant:
-    def __init__(self, _id, name):
-        self.__id = _id
-        self.__name = name
+class User:
+    def __init__(self, _id, name, password, login):
+        self._id = _id
+        self._name = name
         
     
     @property
     def id(self):
-        return self.__id
+        return self._id
     
     
     @property
     def name(self):
-        return self.__name
+        return self._name
+    
+    
+    @property
+    def name(self):
+        return self._name
+    
+    
+    @property
+    def name(self):
+        return self._name
+    
+    
+if __name__ == "__main__":
+    luc = User(1, 'Lucas', '123', 'luc')
+    print(luc.name)

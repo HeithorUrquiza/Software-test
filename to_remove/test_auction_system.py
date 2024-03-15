@@ -1,4 +1,4 @@
-from src.auction import Auction
+from auction_scond_opt import Auction
 from src.user import Participant
 from src.auction_system import AuctionSystem
 import pytest
