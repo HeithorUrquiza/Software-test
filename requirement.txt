@@ -11,6 +11,7 @@ ipython==8.22.1
 jedi==0.19.1
 jupyter_client==8.6.0
 jupyter_core==5.7.1
+linecache2==1.0.0
 matplotlib-inline==0.1.6
 nest-asyncio==1.6.0
 packaging==23.2
@@ -29,5 +30,7 @@ pyzmq==25.1.2
 six==1.16.0
 stack-data==0.6.3
 tornado==6.4
+traceback2==1.4.0
 traitlets==5.14.1
+unittest2==1.1.0
 wcwidth==0.2.13

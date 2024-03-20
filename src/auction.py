@@ -3,13 +3,12 @@ from datetime import datetime as dt
 from src.bid import Bid
 
 class Auction():
-    def __init__(self, _id: int, name: str, initial_value: float, user: User = None, open_data: dt = dt.now, bids: list = []) -> None:
+    def __init__(self, _id: int, name: str, initial_value: float, open_data: dt = dt.now()) -> None:
         self._id = _id
         self._name = name
         self._initial_value = initial_value
-        self._user = user
         self._open_data = open_data
-        self._bids = bids
+        self._bids: list = []
         
     
     @property
@@ -75,18 +74,19 @@ class Auction():
     
         
     def propose(self, bid: Bid):
-        if not self.is_valid(bid): return False
+        if not self.is_valid(bid): 
+            return False
         
         if self.its_whithout_bids() or self.is_valid_bid(bid):
             self.add_bid(bid)
             return True
         return False
     
-    
     def propose_void(self, bid: Bid):
-        if not self.is_valid: raise RuntimeError("Lance deve ser maior que zero")
+        if not self.is_valid(bid): 
+            raise RuntimeError("Lance deve ser maior que zero")
 
-        if self.is_whithout_bids() or self.is_valid_bid(bid):
+        if self.its_whithout_bids() or self.is_valid_bid(bid):
             self.add_bid(bid)
         else:
             raise RuntimeError("Erro inesperado")
@@ -95,3 +95,12 @@ class Auction():
     def last_user_is_not_the_same(self, bid: Bid):
         last_user_bid: User = self.last_bid_proposed().user
         return not last_user_bid == bid.user
+    
+    
+    
+if __name__ == "__main__":
+    user_1 = User(1, "User", "123", "user@t.com")
+    auction = Auction(1, "PS5", 1000.0)
+    bid_1 = Bid(1, 1001.1, dt.now())
+    a = auction.propose(bid_1)
+    print(a)

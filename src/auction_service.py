@@ -10,7 +10,7 @@ class AuctionService():
         if auction.name == None or auction.name in ["", " "]: 
             raise RuntimeError("É necessário informar o nome do leilão")
         
-        if auction.initial_value == None or auction.initial_value <= 0:
+        if auction.initial_value == None or auction.initial_value <= 0.0:
             raise RuntimeError("É necessário um valor maior que zero para o leilão")
         
         self._persistence.insert(auction)
