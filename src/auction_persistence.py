@@ -17,7 +17,7 @@ class AuctionPersistence():
 
 
     def delete(self, id: int):
-        for item in Auction:
+        for item in self._auctions_table:
             if item.id == id:
                 self._auctions_table.remove(item)
         

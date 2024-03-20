@@ -14,3 +14,18 @@ class AuctionService():
             raise RuntimeError("É necessário um valor maior que zero para o leilão")
         
         self._persistence.insert(auction)
+        
+        
+    def get_auction(self, id: int):
+        auctions = self._persistence.read()
+        for item in auctions:
+            if item.id == id:
+                return item
+        raise RuntimeError("O id informado é inválido ou não existe no banco de dados")
+    
+    
+    def delete_auction(self, id: int):
+        if id == None or id < 0:
+            raise RuntimeError("O id informado é inválido")
+        
+        self._persistence.delete(id)

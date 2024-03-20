@@ -97,7 +97,7 @@ class TestAuctions(unittest.TestCase):
             mock_persistence = Mock()
             service = AuctionService(mock_persistence)
             service.register_new_auction(self.auction)
-            # mock_persistence.insert.assert_called_once_with(self.auction)
+            mock_persistence.insert.assert_called_once_with(self.auction)
         except RuntimeError as err:
             pytest.fail(f"Exceção inesperada: {err}")
 
@@ -150,3 +150,50 @@ class TestAuctions(unittest.TestCase):
             service.register_new_auction(auction)
             
         assert err.type is RuntimeError
+        
+        
+    def test_get_auction_must_return_an_auction_if_id_exist(self):
+        mock_persistence = Mock()
+        
+        mock_persistence.read.return_value = [
+            Auction(1, "PS5", 1000, dt.now()),
+            Auction(2, "Xbox Series X", 1500, dt.now())
+        ]
+        
+        service = AuctionService(mock_persistence)
+        auction = service.get_auction(1)
+        assert auction.id == 1
+        assert auction.name == "PS5"
+        assert auction.initial_value == 1000
+
+
+    def test_get_auction_must_fail_when_id_doesnt_exist(self):
+        mock_persistence = Mock()
+        
+        mock_persistence.read.return_value = [
+            Auction(1, "PS5", 1000),
+            Auction(2, "Xbox Series X", 1500)
+        ]
+        
+        service = AuctionService(mock_persistence)
+        
+        with pytest.raises(RuntimeError, match="O id informado é inválido ou não existe no banco de dados"):
+            service.get_auction(3)
+            
+            
+    def test_delete_auction_if_id_is_valid(self):
+        try:
+            mock_persistence = Mock()
+            service = AuctionService(mock_persistence)
+            service.delete_auction(1)
+            mock_persistence.delete.assert_called_once_with(1)
+        except RuntimeError as err:
+            pytest.fail(f"Exceção inesperada: {err}")
+            
+            
+    def test_delete_auction_must_fail_when_id_is_invalid(self):
+        mock_persistence = Mock()
+        service = AuctionService(mock_persistence)
+        
+        with pytest.raises(RuntimeError, match="O id informado é inválido"):
+            service.delete_auction(None)
