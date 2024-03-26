@@ -3,12 +3,14 @@ from datetime import datetime as dt
 from src.bid import Bid
 
 class Auction():
-    def __init__(self, _id: int, name: str, initial_value: float, open_data: dt = dt.now()) -> None:
+    def __init__(self, _id: int, name: str, initial_value: float, closing_date: dt) -> None:
         self._id = _id
         self._name = name
         self._initial_value = initial_value
-        self._open_data = open_data
+        self._open_data = None
+        self._closing_date = closing_date
         self._bids: list = []
+        self._status: str = "Inativo"
         
     
     @property
@@ -29,6 +31,11 @@ class Auction():
     @property
     def initial_value(self):
         return self._initial_value
+    
+    
+    @property
+    def status(self):
+        return self._status
     
         
     def is_valid(self, bid: Bid):
@@ -82,6 +89,7 @@ class Auction():
             return True
         return False
     
+    
     def propose_void(self, bid: Bid):
         if not self.is_valid(bid): 
             raise RuntimeError("Lance deve ser maior que zero")
@@ -97,10 +105,25 @@ class Auction():
         return not last_user_bid == bid.user
     
     
+    def check_date(self):
+        if self._closing_date <= dt.now():
+            self._status = "Expirado"
     
+    
+    def start_auction(self):
+        if self._status != "Inativo":
+            raise RuntimeError("Não é possível iniciar um leilão já ATIVO ou EXPIRADO")
+        
+        self._status = "Ativo"
+        self._open_data = dt.now()
+
+        
+    def finish_auction(self):
+        if self._status not in ["Ativo", "Expirado"]:
+            raise RuntimeError("Não é possível finalizar um leilão INATIVO ou FINALIZADO")
+        
+        self._status = "Finalizado"
+        
+        
 if __name__ == "__main__":
-    user_1 = User(1, "User", "123", "user@t.com")
-    auction = Auction(1, "PS5", 1000.0)
-    bid_1 = Bid(1, 1001.1, dt.now())
-    a = auction.propose(bid_1)
-    print(a)
+    print(type(dt.now()))
