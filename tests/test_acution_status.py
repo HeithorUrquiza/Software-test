@@ -4,7 +4,7 @@ import pytest
 import unittest
 
  
-class TestAuctions(unittest.TestCase):    
+class TestAuctionsStatus(unittest.TestCase):    
     def test_must_status_auction_begin_inativo(self):
         try:
             auction = Auction(1, "PS5", 1000.0, dt(2024, 4, 22))

@@ -29,3 +29,23 @@ class AuctionService():
             raise RuntimeError("O id informado é inválido")
         
         self._persistence.delete(id)
+        
+        
+    def update_auction(self, id: int, **kwargs):
+        auctions = self._persistence.read()
+        
+        if id == None or id < 0:
+            raise RuntimeError("O id informado é inválido")
+        
+        for item in auctions:
+            if item.id == id:
+                item.name = kwargs["name"]
+                item.initial_value = kwargs["initial_value"]
+                item.closing_date = kwargs["closing_date"]
+                
+                self._persistence.reload(item)
+                return item
+                
+        raise RuntimeError("O id informado não existe no banco de dados")
+        
+        

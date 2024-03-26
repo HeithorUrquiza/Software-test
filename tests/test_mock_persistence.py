@@ -1,8 +1,6 @@
 from src.auction import Auction
-from src.user import User
-from src.bid import Bid
 from datetime import datetime as dt
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from src.auction_service import AuctionService
 import pytest
 import unittest
@@ -12,8 +10,9 @@ class TestMockPersistence(unittest.TestCase):
         try:
             mock_persistence = Mock()
             service = AuctionService(mock_persistence)
-            service.register_new_auction(self.auction)
-            mock_persistence.insert.assert_called_once_with(self.auction)
+            auction = Auction(1, "PS5", 1000, dt(2024, 4, 2))
+            service.register_new_auction(auction)
+            mock_persistence.insert.assert_called_once_with(auction)
         except RuntimeError as err:
             pytest.fail(f"Exceção inesperada: {err}")
 
@@ -87,8 +86,8 @@ class TestMockPersistence(unittest.TestCase):
         mock_persistence = Mock()
         
         mock_persistence.read.return_value = [
-            Auction(1, "PS5", 1000),
-            Auction(2, "Xbox Series X", 1500)
+            Auction(1, "PS5", 1000, dt(2024, 4, 2)),
+            Auction(2, "Xbox Series X", 1500, dt(2024, 4, 2))
         ]
         
         service = AuctionService(mock_persistence)
@@ -112,4 +111,33 @@ class TestMockPersistence(unittest.TestCase):
         service = AuctionService(mock_persistence)
         
         with pytest.raises(RuntimeError, match="O id informado é inválido"):
-            service.delete_auction(None)
+            service.delete_auction(None)          
+                       
+                       
+    def test_update_auction_success(self):
+        # Configuração do mock
+        mock_persistence = Mock()
+        mock_persistence.read.return_value = [Auction(1, "PS5", 1000.0, dt(2024, 4, 22))]
+        
+        service = AuctionService(mock_persistence)
+        service.update_auction(id=1, name="Xbox", initial_value=1000.0, closing_date=dt(2024, 4, 22))
+        
+        # Verifica se o método reload foi chamado
+        mock_persistence.reload.assert_called_once()
+    
+    
+    def test_update_auction_invalid_id(self):
+        mock_persistence = Mock()
+        service = AuctionService(mock_persistence)
+        with self.assertRaises(RuntimeError):
+            service.update_auction(None, name="PS5", initial_value=1000.0, closing_date=dt(2024, 4, 22))
+    
+    
+    def test_update_auction_auction_not_found(self):
+        # Configuração do mock
+        mock_persistence = Mock()
+        mock_persistence.read.return_value = [Auction(1, "PS5", 1000.0, dt(2024, 4, 22))]
+        
+        service = AuctionService(mock_persistence)
+        with self.assertRaises(RuntimeError):
+            service.update_auction(2, name="PS5", initial_value=1000.0, closing_date=dt(2024, 4, 22))

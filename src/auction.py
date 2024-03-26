@@ -28,14 +28,33 @@ class Auction():
         return self._name
     
     
+    @name.setter
+    def name(self, value: str):
+        self._nome = value
+    
+    
     @property
     def initial_value(self):
         return self._initial_value
     
     
+    @initial_value.setter
+    def initial_value(self, value: float):
+        self._initial_value = value
+    
+    
     @property
     def status(self):
         return self._status
+    
+    @property
+    def closing_date(self):
+        return self._closing_date
+    
+    
+    @closing_date.setter
+    def closing_date(self, value: dt):
+        self._closing_date = value
     
         
     def is_valid(self, bid: Bid):
